@@ -30,32 +30,32 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     address: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(256),
       allowNull: false,
       unique: true
     },
     city: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(256),
       allowNull: false
     },
     state: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(50),
       allowNull: false
     },
     country: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false
     },
     lat: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL,
       allowNull: false
     },
     lng: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL,
       allowNull: false
     },
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(256),
       allowNull: false
     },
     description: {
@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     price: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL,
       allowNull: false,
       validate: {
         min: 1
