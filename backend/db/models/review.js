@@ -10,14 +10,38 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.belongsTo(models.User, {
+        foreignKey: 'userId'
+      }),
+      this.belongsTo(models.Spot, {
+        foreignKey: 'spotId'
+      }),
+      this.hasMany(models.ReviewImage, {
+        foreignKey: 'reviewId'
+      })
     }
   }
   Review.init({
-    userId: DataTypes.INTEGER,
-    spotId: DataTypes.INTEGER,
-    review: DataTypes.TEXT,
-    stars: DataTypes.INTEGER
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    spotId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    review: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    stars: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        min: 1,
+        max: 5
+      }
+    }
   }, {
     sequelize,
     modelName: 'Review',
