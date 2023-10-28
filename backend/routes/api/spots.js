@@ -4,9 +4,46 @@ const { handleValidationErrors } = require('../../utils/validation');
 const { Op } = require('sequelize');
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { Spot, SpotImage, Review } = require('../../db/models');
+const { Spot, SpotImage, Review, User } = require('../../db/models');
 
 const router = express.Router();
+
+router.get('/:spotId', async (req, res, next) => {
+  const spotId = req.params.spotId;
+  let spot = await Spot.findByPk(spotId, {
+    include: [
+      {
+        model: Review
+      },
+      {
+        model: SpotImage,
+        attributes: [ "id", "url", "preview" ]
+      },
+      {
+        model: User,
+        attributes: [ "id", "firstName", "lastName" ],
+        as: "Owner"
+      }
+    ]
+  });
+  spot = spot.toJSON();
+
+  if (spot.Reviews.length) {
+    spot.numReviews = spot.Reviews.length;
+
+    let ratingsSum = 0;
+    spot.Reviews.forEach(review => {
+      ratingsSum += review.stars
+    });
+    spot.avgStarRating = ratingsSum / spot.Reviews.length;
+  } else {
+    spot.numReviews = 0
+    spot.avgStarRating = "No reviews for this spot yet"
+  };
+  delete spot.Reviews;
+
+  res.json(spot);
+})
 
 router.get('/current', async (req, res, next) => {
   const { user } = req;
