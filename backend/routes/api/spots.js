@@ -26,7 +26,13 @@ router.get('/:spotId', async (req, res, next) => {
       }
     ]
   });
-  spot = spot.toJSON();
+
+  if (spot) {
+    spot = spot.toJSON();
+  } else {
+    res.status(404);
+    return res.json({ "message": "Spot couldn't be found" })
+  }
 
   if (spot.Reviews.length) {
     spot.numReviews = spot.Reviews.length;
