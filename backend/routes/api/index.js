@@ -16,4 +16,9 @@ router.post('/test', (req, res) => {
   res.json({ requestBody: req.body });
 });
 
+router.use('/', (err, req, res, next) => {
+  res.status(err.status);
+  res.json(err.errors);
+});
+
 module.exports = router;

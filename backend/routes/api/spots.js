@@ -51,7 +51,7 @@ router.get('/:spotId', async (req, res, next) => {
   res.json(spot);
 })
 
-router.get('/current', async (req, res, next) => {
+router.get('/current', requireAuth, async (req, res, next) => {
   const { user } = req;
   const spots = await Spot.findAll({
     where: { ownerId: user.id },
@@ -142,5 +142,16 @@ router.get('/', async (req, res, next) => {
 
   res.json(spotsList);
 });
+
+router.post('/', requireAuth, async (req, res, next) => {
+  const { user } = req;
+  const spotInfo = req.body;
+  spotInfo.ownerId = user.id;
+
+  const newSpot = await Spot.create(spotInfo);
+
+  res.status(201);
+  res.json(newSpot);
+})
 
 module.exports = router
