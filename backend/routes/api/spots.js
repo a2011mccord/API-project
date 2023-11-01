@@ -143,6 +143,14 @@ router.get('/', async (req, res, next) => {
   res.json(spotsList);
 });
 
+router.post('/:spotId/images', requireAuth, async (req, res, next) => {
+  const spot = await Spot.findByPk(req.params.spotId);
+  const imageInfo = req.body;
+  imageInfo.spotId = spot.id;
+
+
+});
+
 router.post('/', requireAuth, async (req, res, next) => {
   const { user } = req;
   const spotInfo = req.body;
@@ -152,6 +160,6 @@ router.post('/', requireAuth, async (req, res, next) => {
 
   res.status(201);
   res.json(newSpot);
-})
+});
 
 module.exports = router
