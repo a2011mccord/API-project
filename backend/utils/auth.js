@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { jwtConfig } = require('../config');
-const { User } = require('../db/models');
+const { User, Spot, Review, Booking } = require('../db/models');
 
 const { secret, expiresIn } = jwtConfig;
 
@@ -72,4 +72,39 @@ const requireAuth = [
   }
 ];
 
-module.exports = { setTokenCookie, restoreUser, requireAuth };
+const authorize = async function (req, res, next) {
+  const spot = await Spot.findByPk(req.params.spotId);
+  if (!spot) {
+    res.status(404);
+    return res.json({ "message": "Spot couldn't be found" })
+  };
+  const userId = req.user.id;
+  let permission = false;
+  if (req.params.spotId) {
+    const spot = await Spot.findByPk(req.params.spotId);
+    if (userId === spot.ownerId) {
+      permission = true;
+    };
+  } else if (req.params.reviewId) {
+    const review = await Review.findByPk(req.params.reviewId);
+    if (userId === review.userId) {
+      permission = true;
+    };
+  } else if (req.params.bookingId) {
+    const booking = await Booking.findByPk(req.params.bookingId);
+    if (userId === booking.userId) {
+      permission = true;
+    };
+  };
+
+  if (permission) return next();
+  else {
+    const err = new Error('Authorization required');
+    err.title = 'Authorization required';
+    err.errors = { message: 'Authorization required' };
+    err.status = 403;
+    return next(err);
+  }
+};
+
+module.exports = { setTokenCookie, restoreUser, requireAuth, authorize };

@@ -17,8 +17,19 @@ router.post('/test', (req, res) => {
 });
 
 router.use('/', (err, req, res, next) => {
-  res.status(err.status);
-  res.json(err.errors);
+  if (err.status === 401) {
+    res.status(err.status);
+    res.json(err.errors);
+  } else if (err.status === 403) {
+    res.status(err.status);
+    res.json(
+      {
+        "message": "Forbidden"
+      }
+    )
+  } else {
+    next(err)
+  }
 });
 
 module.exports = router;
