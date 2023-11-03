@@ -222,7 +222,7 @@ router.put('/:spotId', requireAuth, authorize, validateSpotInfo, async (req, res
   const spot = await Spot.findByPk(req.params.spotId);
   const newSpotInfo = req.body;
 
-  spot.set({
+  await spot.set({
     address: newSpotInfo.address,
     city: newSpotInfo.city,
     state: newSpotInfo.state,
@@ -236,6 +236,14 @@ router.put('/:spotId', requireAuth, authorize, validateSpotInfo, async (req, res
 
   await spot.save();
   res.json(spot);
+});
+
+router.delete('/:spotId', requireAuth, authorize, async (req, res, next) => {
+  const spot = await Spot.findByPk(req.params.spotId);
+
+  spot.destroy();
+
+  res.json({ 'message': 'Successfully deleted' });
 });
 
 module.exports = router
