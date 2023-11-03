@@ -218,4 +218,24 @@ router.post('/', requireAuth, validateSpotInfo, async (req, res, next) => {
   res.json(newSpot);
 });
 
+router.put('/:spotId', requireAuth, authorize, validateSpotInfo, async (req, res, next) => {
+  const spot = await Spot.findByPk(req.params.spotId);
+  const newSpotInfo = req.body;
+
+  spot.set({
+    address: newSpotInfo.address,
+    city: newSpotInfo.city,
+    state: newSpotInfo.state,
+    country: newSpotInfo.country,
+    lat: newSpotInfo.lat,
+    lng: newSpotInfo.lng,
+    name: newSpotInfo.name,
+    description: newSpotInfo.description,
+    price: newSpotInfo.price
+  });
+
+  await spot.save();
+  res.json(spot);
+});
+
 module.exports = router

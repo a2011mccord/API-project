@@ -73,6 +73,11 @@ const requireAuth = [
 ];
 
 const authorize = async function (req, res, next) {
+  const spot = await Spot.findByPk(req.params.spotId);
+  if (!spot) {
+    res.status(404);
+    return res.json({ "message": "Spot couldn't be found" })
+  };
   const userId = req.user.id;
   let permission = false;
   if (req.params.spotId) {
