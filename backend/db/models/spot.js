@@ -56,8 +56,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     name: {
-      type: DataTypes.STRING(256),
-      allowNull: false
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      validate: {
+        len: [0, 50]
+      }
     },
     description: {
       type: DataTypes.TEXT,

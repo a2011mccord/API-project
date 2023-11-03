@@ -27,6 +27,8 @@ router.use('/', (err, req, res, next) => {
         "message": "Forbidden"
       }
     )
+  } else {
+    next(err)
   }
 });
 

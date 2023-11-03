@@ -8,6 +8,50 @@ const { Spot, SpotImage, Review, User } = require('../../db/models');
 
 const router = express.Router();
 
+const validateSpotInfo = [
+  check('address')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .withMessage('Street address is required'),
+  check('city')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .withMessage('City is required'),
+  check('state')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .withMessage('State is required'),
+  check('country')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .withMessage('Country is required'),
+  check('lat')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .isDecimal()
+    .withMessage('Latitude is not valid'),
+  check('lng')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .isDecimal()
+    .withMessage('Longitude is not valid'),
+  check('name')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .isLength({ max: 50 })
+    .withMessage('Name must be less than 50 characters'),
+  check('description')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .withMessage('Description is required'),
+  check('price')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .isDecimal()
+    .withMessage('Price per day is required'),
+  handleValidationErrors
+];
+
 router.get('/:spotId', async (req, res, next) => {
   const spotId = req.params.spotId;
   let spot = await Spot.findByPk(spotId, {
@@ -163,7 +207,7 @@ router.post('/:spotId/images', requireAuth, authorize, async (req, res, next) =>
   });
 });
 
-router.post('/', requireAuth, async (req, res, next) => {
+router.post('/', requireAuth, validateSpotInfo, async (req, res, next) => {
   const { user } = req;
   const spotInfo = req.body;
   spotInfo.ownerId = user.id;
