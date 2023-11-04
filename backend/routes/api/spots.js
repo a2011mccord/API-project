@@ -4,7 +4,7 @@ const { handleValidationErrors } = require('../../utils/validation');
 const { Op } = require('sequelize');
 
 const { requireAuth, authorize } = require('../../utils/auth');
-const { Spot, SpotImage, Review, ReviewImage, User } = require('../../db/models');
+const { Spot, SpotImage, Review, ReviewImage, User, Booking } = require('../../db/models');
 
 const router = express.Router();
 
@@ -63,6 +63,45 @@ const validateSpotInfo = [
     .withMessage('Price per day is required'),
   handleValidationErrors
 ];
+
+router.get('/:spotId/bookings', requireAuth, async (req, res, next) => {
+  const spot = await Spot.findByPk(req.params.spotId);
+  if (!spot) {
+    res.status(404)
+    return res.json({ "message": "Spot couldn't be found" });
+  };
+  const { user } = req;
+  const bookings = await Booking.findAll({
+    where: { spotId: req.params.spotId },
+    include: [{ model: User, attributes: ['id', 'firstName', 'lastName'] }]
+  });
+
+  let response;
+  if (spot.ownerId === user.id) {
+    response = {
+      "Bookings": bookings
+    }
+  } else {
+    const bookingsJson = [];
+    bookings.forEach(booking => {
+      bookingsJson.push(booking.toJSON());
+    });
+    const bookingsList = [];
+    bookingsJson.forEach(booking => {
+      bookingsList.push({
+        "spotId": booking.spotId,
+        "startDate": booking.startDate,
+        "endDate": booking.endDate
+      });
+    });
+
+    response = {
+      "Bookings": bookingsList
+    };
+  };
+
+  res.json(response);
+});
 
 router.get('/:spotId/reviews', async (req, res, next) => {
   const spotId = req.params.spotId;
