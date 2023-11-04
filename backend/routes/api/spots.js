@@ -268,7 +268,6 @@ router.post('/:spotId/images', requireAuth, authorize, async (req, res, next) =>
 
   await spot.addSpotImage(image);
 
-
   res.json({
     "id": image.id,
     "url": image.url,
