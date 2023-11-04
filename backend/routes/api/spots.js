@@ -9,10 +9,9 @@ const { Spot, SpotImage, Review, ReviewImage, User, Booking } = require('../../d
 const router = express.Router();
 
 const validateBookingInfo = [
-  check(['endDate'])
+  check('endDate')
     .exists()
     .notEmpty()
-    .isAfter({ comparisonDate: 'startDate'})
     .withMessage('endDate cannot be on or before startDate'),
   handleValidationErrors
 ];
@@ -71,6 +70,51 @@ const validateSpotInfo = [
     .withMessage('Price per day is required'),
   handleValidationErrors
 ];
+
+router.get('/', async (req, res, next) => {
+  const spots = await Spot.findAll({
+    include: [
+      {
+        model: SpotImage
+      },
+      {
+        model: Review
+      }
+    ]
+  });
+
+  let spotsList = []
+  spots.forEach(spot => {
+    spotsList.push(spot.toJSON())
+  });
+
+  spotsList.forEach(spot => {
+    let ratingsSum = 0;
+    spot.Reviews.forEach(review => {
+      ratingsSum += review.stars
+    });
+    if (ratingsSum) {
+      spot.avgRating = ratingsSum / spot.Reviews.length;
+    } else {
+      spot.avgRating = "No reviews for this spot yet"
+    };
+    delete spot.Reviews;
+  });
+
+  spotsList.forEach(spot => {
+    spot.SpotImages.forEach(image => {
+      if (image.preview === true) {
+        spot.previewImage = image.url
+      };
+    });
+    if (!spot.previewImage) {
+      spot.previewImage = "No preview image found"
+    };
+    delete spot.SpotImages
+  });
+
+  res.json(spotsList);
+});
 
 router.get('/:spotId/bookings', requireAuth, async (req, res, next) => {
   const spot = await Spot.findByPk(req.params.spotId);
@@ -230,50 +274,7 @@ router.get('/current', requireAuth, async (req, res, next) => {
   res.json(spotsList);
 });
 
-router.get('/', async (req, res, next) => {
-  const spots = await Spot.findAll({
-    include: [
-      {
-        model: SpotImage
-      },
-      {
-        model: Review
-      }
-    ]
-  });
 
-  let spotsList = []
-  spots.forEach(spot => {
-    spotsList.push(spot.toJSON())
-  });
-
-  spotsList.forEach(spot => {
-    let ratingsSum = 0;
-    spot.Reviews.forEach(review => {
-      ratingsSum += review.stars
-    });
-    if (ratingsSum) {
-      spot.avgRating = ratingsSum / spot.Reviews.length;
-    } else {
-      spot.avgRating = "No reviews for this spot yet"
-    };
-    delete spot.Reviews;
-  });
-
-  spotsList.forEach(spot => {
-    spot.SpotImages.forEach(image => {
-      if (image.preview === true) {
-        spot.previewImage = image.url
-      };
-    });
-    if (!spot.previewImage) {
-      spot.previewImage = "No preview image found"
-    };
-    delete spot.SpotImages
-  });
-
-  res.json(spotsList);
-});
 
 router.post('/:spotId/bookings', requireAuth, notOwner, validateBooking, async (req, res, next) => {
   const { user } = req;
