@@ -102,4 +102,12 @@ router.put('/:reviewId', requireAuth, authorize, validateReviewInfo, async (req,
   res.json(review);
 });
 
+router.delete('/:reviewId', requireAuth, authorize, async (req, res, next) => {
+  const review = await Review.findByPk(req.params.reviewId);
+
+  review.destroy();
+
+  res.json({ 'message': 'Successfully deleted' });
+});
+
 module.exports = router
