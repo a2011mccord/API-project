@@ -73,25 +73,33 @@ const requireAuth = [
 ];
 
 const authorize = async function (req, res, next) {
-  const spot = await Spot.findByPk(req.params.spotId);
-  if (!spot) {
+  const { spotId, reviewId, bookingId } = req.params;
+  const spot = await Spot.findByPk(spotId);
+  const review = await Review.findByPk(reviewId);
+  const booking = await Booking.findByPk(bookingId);
+  if (!spot && !reviewId && !bookingId) {
     res.status(404);
-    return res.json({ "message": "Spot couldn't be found" })
+    return res.json({ "message": "Spot couldn't be found" });
+  } else if (!review && !spotId && !bookingId) {
+    res.status(404);
+    return res.json({ "message": "Review couldn't be found" });
+  } else if (!booking && !spotId && !reviewId) {
+    res.status(404);
+    return res.json({ "message": "Booking couldn't be found" });
   };
+
   const userId = req.user.id;
   let permission = false;
-  if (req.params.spotId) {
-    const spot = await Spot.findByPk(req.params.spotId);
+  if (spotId) {
     if (userId === spot.ownerId) {
       permission = true;
     };
-  } else if (req.params.reviewId) {
-    const review = await Review.findByPk(req.params.reviewId);
+  } else if (reviewId) {
+
     if (userId === review.userId) {
       permission = true;
     };
-  } else if (req.params.bookingId) {
-    const booking = await Booking.findByPk(req.params.bookingId);
+  } else if (bookingId) {
     if (userId === booking.userId) {
       permission = true;
     };
