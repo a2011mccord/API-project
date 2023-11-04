@@ -139,49 +139,6 @@ router.get('/:spotId/reviews', async (req, res, next) => {
   res.json(response);
 });
 
-router.get('/:spotId', async (req, res, next) => {
-  const spotId = req.params.spotId;
-  let spot = await Spot.findByPk(spotId, {
-    include: [
-      {
-        model: Review
-      },
-      {
-        model: SpotImage,
-        attributes: [ "id", "url", "preview" ]
-      },
-      {
-        model: User,
-        attributes: [ "id", "firstName", "lastName" ],
-        as: "Owner"
-      }
-    ]
-  });
-
-  if (spot) {
-    spot = spot.toJSON();
-  } else {
-    res.status(404);
-    return res.json({ "message": "Spot couldn't be found" })
-  }
-
-  if (spot.Reviews.length) {
-    spot.numReviews = spot.Reviews.length;
-
-    let ratingsSum = 0;
-    spot.Reviews.forEach(review => {
-      ratingsSum += review.stars
-    });
-    spot.avgStarRating = ratingsSum / spot.Reviews.length;
-  } else {
-    spot.numReviews = 0
-    spot.avgStarRating = "No reviews for this spot yet"
-  };
-  delete spot.Reviews;
-
-  res.json(spot);
-})
-
 router.get('/current', requireAuth, async (req, res, next) => {
   const { user } = req;
   const spots = await Spot.findAll({
@@ -227,6 +184,49 @@ router.get('/current', requireAuth, async (req, res, next) => {
   });
 
   res.json(spotsList);
+});
+
+router.get('/:spotId', async (req, res, next) => {
+  const spotId = req.params.spotId;
+  let spot = await Spot.findByPk(spotId, {
+    include: [
+      {
+        model: Review
+      },
+      {
+        model: SpotImage,
+        attributes: [ "id", "url", "preview" ]
+      },
+      {
+        model: User,
+        attributes: [ "id", "firstName", "lastName" ],
+        as: "Owner"
+      }
+    ]
+  });
+
+  if (spot) {
+    spot = spot.toJSON();
+  } else {
+    res.status(404);
+    return res.json({ "message": "Spot couldn't be found" })
+  }
+
+  if (spot.Reviews.length) {
+    spot.numReviews = spot.Reviews.length;
+
+    let ratingsSum = 0;
+    spot.Reviews.forEach(review => {
+      ratingsSum += review.stars
+    });
+    spot.avgStarRating = ratingsSum / spot.Reviews.length;
+  } else {
+    spot.numReviews = 0
+    spot.avgStarRating = "No reviews for this spot yet"
+  };
+  delete spot.Reviews;
+
+  res.json(spot);
 });
 
 router.get('/', async (req, res, next) => {
