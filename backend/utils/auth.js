@@ -102,6 +102,8 @@ const authorize = async function (req, res, next) {
   } else if (bookingId) {
     if (userId === booking.userId) {
       permission = true;
+    } else if (req.method === 'DELETE') {
+      return next();
     };
   };
 
@@ -115,4 +117,38 @@ const authorize = async function (req, res, next) {
   }
 };
 
-module.exports = { setTokenCookie, restoreUser, requireAuth, authorize };
+const notOwner = async function (req, res, next) {
+  const userId = req.user.id;
+  const  spotId  = req.params.spotId;
+  const spot = await Spot.findByPk(spotId);
+  if (!spot) {
+    res.status(404)
+    return res.json({ "message": "Spot couldn't be found" });
+  };
+
+  if (userId !== spot.ownerId) return next();
+  else {
+    const err = new Error('Authorization required');
+    err.title = 'Authorization required';
+    err.errors = { message: 'Authorization required' };
+    err.status = 403;
+    return next(err);
+  }
+};
+
+const owner = async (req, res, next) => {
+  const { user } = req;
+  const booking = await Booking.findByPk(req.params.bookingId);
+  const spot = await Spot.findByPk(booking.spotId);
+
+  if (user.id === spot.ownerId) return next();
+  else {
+    const err = new Error('Authorization required');
+    err.title = 'Authorization required';
+    err.errors = { message: 'Authorization required' };
+    err.status = 403;
+    return next(err);
+  }
+}
+
+module.exports = { setTokenCookie, restoreUser, requireAuth, authorize, notOwner, owner };
