@@ -3,7 +3,7 @@ const { Booking } = require('../db/models');
 
 const validateBooking = async (req, res, next) => {
   const bookingInfo = req.body;
-  const { spotId, bookingId } = req.params
+  const { spotId, bookingId } = req.params;
   let bookings;
   if (spotId) {
     bookings = await Booking.findAll({
@@ -15,21 +15,32 @@ const validateBooking = async (req, res, next) => {
     });
   };
 
+
   const currentDate = new Date();
+
+  if (req.method === 'DELETE') {
+    const startDate = new Date(booking.startDate);
+    const endDate = new Date(booking.endDate);
+    if (startDate.getTime() <= currentDate.getTime() && endDate.getTime() >= currentDate.getTime()) {
+      const err = new Error("Bookings that have been started can't be deleted");
+      err.status = 413;
+      next(err);
+    }
+  }
 
   const newStartDate = new Date(bookingInfo.startDate);
   const newEndDate = new Date(bookingInfo.endDate);
 
   if (newStartDate.getTime() >= newEndDate.getTime()) {
     const err = new Error("Bad Request");
-    err.errors = { "endDate": "endDate cannot be on or before startDate"}
+    err.errors = { "endDate": "endDate cannot be on or before startDate" }
     err.status = 400;
     next(err);
   }
 
   bookings.forEach(booking => {
     const oldStartDate = new Date(booking.startDate);
-    const oldEndDate = new Date(booking.endDate)
+    const oldEndDate = new Date(booking.endDate);
 
     if (newStartDate.getTime() <= oldEndDate.getTime() && newEndDate.getTime() >= oldStartDate.getTime()) {
       const conflictErr = new Error("Sorry, this spot is already booked for the specified dates");
@@ -41,7 +52,7 @@ const validateBooking = async (req, res, next) => {
       conflictErr.errors = { "endDate": "End date conflicts with an existing booking"};
       conflictErr.status = 403;
       next(conflictErr);
-    } else if (bookingId && newStartDate.getTime() <= currentDate.getTime()) {
+    } else if (bookingId && oldStartDate.getTime() <= currentDate.getTime()) {
       const err = new Error("Past bookings can't be modified");
       err.status = 413;
       next(err);

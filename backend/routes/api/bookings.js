@@ -3,7 +3,7 @@ const { check } = require('express-validator');
 const { handleValidationErrors, validateBooking } = require('../../utils/validation');
 const { Op } = require('sequelize');
 
-const { requireAuth, authorize } = require('../../utils/auth');
+const { requireAuth, authorize, owner } = require('../../utils/auth');
 const { Spot, SpotImage, Review, User, ReviewImage, Booking } = require('../../db/models');
 
 const router = express.Router();
@@ -55,6 +55,14 @@ router.put('/:bookingId', requireAuth, authorize, validateBooking, async (req, r
 
   await booking.save();
   res.json(booking);
+});
+
+router.delete('/:bookingId', requireAuth, authorize, owner, async (req, res, next) => {
+  const booking = await Booking.findByPk(req.params.bookingId);
+
+  await booking.destroy();
+
+  res.json({ 'message': 'Successfully deleted' });
 });
 
 module.exports = router;
