@@ -9,11 +9,11 @@ module.exports = {
     await queryInterface.addColumn(options, 'firstName', {
       type: Sequelize.STRING(256),
       allowNull: false,
-    });
+    }, options);
     await queryInterface.addColumn(options, 'lastName', {
       type: Sequelize.STRING(256),
       allowNull: false,
-    });
+    }, options);
   },
   async down (queryInterface, Sequelize) {
     options.tableName = 'Users';
