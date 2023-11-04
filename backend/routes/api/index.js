@@ -26,6 +26,13 @@ router.use('/', (err, req, res, next) => {
   if (err.status === 401) {
     res.status(err.status);
     res.json(err.errors);
+  } else if (err.errors.startDate || err.errors.endDate) {
+    res.status(err.status);
+    const errMessage = {
+      "Message": err.message,
+      "Errors": err.errors
+    }
+    res.json(errMessage);
   } else if (err.status === 403) {
     res.status(err.status);
     res.json(
