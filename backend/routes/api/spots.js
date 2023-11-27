@@ -1,6 +1,6 @@
 const express = require('express');
 const { check } = require('express-validator');
-const { handleValidationErrors, validateBooking } = require('../../utils/validation');
+const { handleValidationErrors } = require('../../utils/validation');
 const { Op } = require('sequelize');
 
 const { requireAuth, authorize, notOwner } = require('../../utils/auth');
@@ -9,10 +9,48 @@ const { Spot, SpotImage, Review, ReviewImage, User, Booking } = require('../../d
 const router = express.Router();
 
 const validateBookingInfo = [
-  check('endDate')
-    .exists()
+  check('startDate')
+    .exists({ checkFalsy: true })
     .notEmpty()
-    .withMessage('endDate cannot be on or before startDate'),
+    .custom(value => {
+      const today = new Date();
+      const startDate = new Date(value);
+      if (startDate < today) {
+        throw new Error('start date cannot be in the past')
+      }
+      return true;
+    }),
+    // .custom(async (value, { req }) => {
+    //   const bookings = await Booking.findAll({
+    //     where: { userId: req.user.id }
+    //   });
+    //   const startDate = new Date(value);
+
+    //   bookings.forEach(booking => {
+    //     const oldStartDate = new Date(booking.startDate);
+    //     const oldEndDate = new Date(booking.endDate);
+
+    //     if (startDate >= oldStartDate || startDate <= oldEndDate) {
+    //       const conflictErr = new Error("Sorry, this spot is already booked for the specified dates");
+    //       conflictErr.errors = { "startDate": "Start date conflicts with an existing booking" };
+    //       conflictErr.status = 403;
+    //       throw conflictErr;
+    //     };
+    //   });
+
+    //   return true;
+    // }),
+  check('endDate')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .custom((value, { req }) => {
+      const startDate = new Date(req.body.startDate);
+      const endDate = new Date(value);
+      if (endDate <= startDate) {
+        throw new Error('end date cannot be on or before start date');
+      }
+      return true;
+    }),
   handleValidationErrors
 ];
 const validateReviewInfo = [
@@ -274,7 +312,7 @@ router.get('/', async (req, res, next) => {
   res.json(spotsList);
 });
 
-router.post('/:spotId/bookings', requireAuth, notOwner, validateBooking, async (req, res, next) => {
+router.post('/:spotId/bookings', requireAuth, notOwner, validateBookingInfo, async (req, res, next) => {
   const { user } = req;
   const spot = await Spot.findByPk(req.params.spotId);
   if (!spot) {
@@ -285,6 +323,30 @@ router.post('/:spotId/bookings', requireAuth, notOwner, validateBooking, async (
   const bookingInfo = req.body;
   bookingInfo.userId = user.id;
   bookingInfo.spotId = spot.id;
+
+  const bookings = await Booking.findAll();
+  const startDate = new Date(bookingInfo.startDate);
+  const endDate = new Date(bookingInfo.endDate);
+
+  bookings.forEach(booking => {
+    const oldStartDate = new Date(booking.startDate);
+    const oldEndDate = new Date(booking.endDate);
+
+    const conflictErr = new Error("Sorry, this spot is already booked for the specified dates");
+    conflictErr.errors = {};
+    conflictErr.status = 403
+
+    if (startDate >= oldStartDate || startDate <= oldEndDate) {
+      conflictErr.errors.startDate = "Start date conflicts with an existing booking";
+    };
+    if (endDate >= oldStartDate || endDate <= oldEndDate) {
+      conflictErr.errors.endDate = "End date conflicts with an existing booking";
+    };
+
+    if (conflictErr.errors.startDate || conflictErr.errors.endDate) {
+      throw conflictErr;
+    }
+  });
 
   const newBooking = await Booking.create(bookingInfo);
 

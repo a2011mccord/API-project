@@ -15,9 +15,6 @@ const validateBooking = async (req, res, next) => {
     });
   };
 
-
-  const currentDate = new Date();
-
   if (req.method === 'DELETE') {
     const startDate = new Date(booking.startDate);
     const endDate = new Date(booking.endDate);
@@ -30,13 +27,6 @@ const validateBooking = async (req, res, next) => {
 
   const newStartDate = new Date(bookingInfo.startDate);
   const newEndDate = new Date(bookingInfo.endDate);
-
-  if (newStartDate.getTime() >= newEndDate.getTime()) {
-    const err = new Error("Bad Request");
-    err.errors = { "endDate": "endDate cannot be on or before startDate" }
-    err.status = 400;
-    next(err);
-  }
 
   bookings.forEach(booking => {
     const oldStartDate = new Date(booking.startDate);

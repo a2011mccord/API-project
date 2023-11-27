@@ -1,12 +1,40 @@
 const express = require('express');
 const { check } = require('express-validator');
-const { handleValidationErrors, validateBooking } = require('../../utils/validation');
+const { handleValidationErrors } = require('../../utils/validation');
 const { Op } = require('sequelize');
 
 const { requireAuth, authorize, owner } = require('../../utils/auth');
 const { Spot, SpotImage, Review, User, ReviewImage, Booking } = require('../../db/models');
 
 const router = express.Router();
+
+
+
+const validateBookingInfo = [
+  check('startDate')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .custom(value => {
+      const today = new Date();
+      const startDate = new Date(value);
+      if (startDate < today) {
+        throw new Error('start date cannot be in the past')
+      }
+      return true;
+    }),
+  check('endDate')
+    .exists({ checkFalsy: true })
+    .notEmpty()
+    .custom((value, { req }) => {
+      const startDate = new Date(req.body.startDate);
+      const endDate = new Date(value);
+      if (endDate <= startDate) {
+        throw new Error('end date cannot be on or before start date');
+      }
+      return true;
+    }),
+  handleValidationErrors
+];
 
 router.get('/current', requireAuth, async (req, res, next) => {
   const { user } = req;
@@ -44,7 +72,7 @@ router.get('/current', requireAuth, async (req, res, next) => {
   res.json(response);
 });
 
-router.put('/:bookingId', requireAuth, authorize, validateBooking, async (req, res, next) => {
+router.put('/:bookingId', requireAuth, authorize, validateBookingInfo, async (req, res, next) => {
   const booking = await Booking.findByPk(req.params.bookingId);
   const newBookingInfo = req.body;
 
