@@ -324,7 +324,9 @@ router.post('/:spotId/bookings', requireAuth, notOwner, validateBookingInfo, asy
   bookingInfo.userId = user.id;
   bookingInfo.spotId = spot.id;
 
-  const bookings = await Booking.findAll();
+  const bookings = await Booking.findAll({
+    where: { spotId: spot.id }
+  });
   const startDate = new Date(bookingInfo.startDate);
   const endDate = new Date(bookingInfo.endDate);
 
