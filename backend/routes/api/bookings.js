@@ -81,7 +81,7 @@ router.put('/:bookingId', requireAuth, authorize, validateBookingInfo, async (re
     const err = new Error("Past bookings can't be modified");
     err.status = 403;
     throw err;
-  }
+  };
 
   // Booking conflict validation
   const bookings = await Booking.findAll({
@@ -121,6 +121,15 @@ router.put('/:bookingId', requireAuth, authorize, validateBookingInfo, async (re
 
 router.delete('/:bookingId', requireAuth, authorize, owner, async (req, res, next) => {
   const booking = await Booking.findByPk(req.params.bookingId);
+
+  // Can't delete bookings that have been started
+  const today = new Date();
+  const startDate = new Date(booking.startDate);
+  if (startDate <= today) {
+    const err = new Error("Bookings that have been started can't be deleted");
+    err.status = 403;
+    throw err;
+  };
 
   await booking.destroy();
 

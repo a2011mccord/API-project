@@ -128,7 +128,7 @@ const notOwner = async function (req, res, next) {
 
   if (userId !== spot.ownerId) return next();
   else {
-    const err = new Error('Authorization required');
+    const err = new Error('Forbidden');
     err.title = 'Authorization required';
     err.errors = { message: 'Authorization required' };
     err.status = 403;
@@ -142,8 +142,9 @@ const owner = async (req, res, next) => {
   const spot = await Spot.findByPk(booking.spotId);
 
   if (user.id === spot.ownerId) return next();
+  else if (user.id === booking.userId) return next();
   else {
-    const err = new Error('Authorization required');
+    const err = new Error('Forbidden');
     err.title = 'Authorization required';
     err.errors = { message: 'Authorization required' };
     err.status = 403;
