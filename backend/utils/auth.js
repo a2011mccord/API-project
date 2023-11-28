@@ -163,6 +163,27 @@ const owner = async (req, res, next) => {
   err.errors = { message: 'Authorization required' };
   err.status = 403;
   return next(err);
-}
+};
 
-module.exports = { setTokenCookie, restoreUser, requireAuth, authorize, notOwner, owner };
+const reviewOwner = async (req, res, next) => {
+  const { user } = req;
+  const { imageId } = req.params;
+
+  const reviewImage = await ReviewImage.findByPk(imageId);
+  if (!reviewImage) {
+    res.status(404);
+    return res.json({ "message": "Review Image couldn't be found" })
+  };
+  const review = await Review.findByPk(reviewImage.reviewId);
+
+  if (!review || user.id === review.userId) return next()
+  else {
+    const err = new Error('Forbidden');
+    err.title = 'Authorization required';
+    err.errors = { message: 'Authorization required' };
+    err.status = 403;
+    return next(err);
+  };
+};
+
+module.exports = { setTokenCookie, restoreUser, requireAuth, authorize, notOwner, owner, reviewOwner };
