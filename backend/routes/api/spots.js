@@ -20,26 +20,6 @@ const validateBookingInfo = [
       }
       return true;
     }),
-    // .custom(async (value, { req }) => {
-    //   const bookings = await Booking.findAll({
-    //     where: { userId: req.user.id }
-    //   });
-    //   const startDate = new Date(value);
-
-    //   bookings.forEach(booking => {
-    //     const oldStartDate = new Date(booking.startDate);
-    //     const oldEndDate = new Date(booking.endDate);
-
-    //     if (startDate >= oldStartDate || startDate <= oldEndDate) {
-    //       const conflictErr = new Error("Sorry, this spot is already booked for the specified dates");
-    //       conflictErr.errors = { "startDate": "Start date conflicts with an existing booking" };
-    //       conflictErr.status = 403;
-    //       throw conflictErr;
-    //     };
-    //   });
-
-    //   return true;
-    // }),
   check('endDate')
     .exists({ checkFalsy: true })
     .notEmpty()
@@ -324,12 +304,12 @@ router.post('/:spotId/bookings', requireAuth, notOwner, validateBookingInfo, asy
   bookingInfo.userId = user.id;
   bookingInfo.spotId = spot.id;
 
+  // Booking conflict validation
   const bookings = await Booking.findAll({
     where: { spotId: spot.id }
   });
   const startDate = new Date(bookingInfo.startDate);
   const endDate = new Date(bookingInfo.endDate);
-
   bookings.forEach(booking => {
     const oldStartDate = new Date(booking.startDate);
     const oldEndDate = new Date(booking.endDate);
@@ -338,10 +318,10 @@ router.post('/:spotId/bookings', requireAuth, notOwner, validateBookingInfo, asy
     conflictErr.errors = {};
     conflictErr.status = 403
 
-    if (startDate >= oldStartDate || startDate <= oldEndDate) {
+    if (startDate >= oldStartDate && startDate <= oldEndDate) {
       conflictErr.errors.startDate = "Start date conflicts with an existing booking";
     };
-    if (endDate >= oldStartDate || endDate <= oldEndDate) {
+    if (endDate >= oldStartDate && endDate <= oldEndDate) {
       conflictErr.errors.endDate = "End date conflicts with an existing booking";
     };
 

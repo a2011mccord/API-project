@@ -8,8 +8,6 @@ const { Spot, SpotImage, Review, User, ReviewImage, Booking } = require('../../d
 
 const router = express.Router();
 
-
-
 const validateBookingInfo = [
   check('startDate')
     .exists({ checkFalsy: true })
@@ -76,12 +74,48 @@ router.put('/:bookingId', requireAuth, authorize, validateBookingInfo, async (re
   const booking = await Booking.findByPk(req.params.bookingId);
   const newBookingInfo = req.body;
 
+  // Past bookings can't be modified
+  const today = new Date();
+  const newEndDate = new Date(newBookingInfo.endDate);
+  if (newEndDate <= today) {
+    const err = new Error("Past bookings can't be modified");
+    err.status = 403;
+    throw err;
+  }
+
+  // Booking conflict validation
+  const bookings = await Booking.findAll({
+    where: { spotId: booking.spotId }
+  });
+  const newStartDate = new Date(newBookingInfo.startDate);
+  bookings.forEach(currBooking => {
+    const oldStartDate = new Date(currBooking.startDate);
+    const oldEndDate = new Date(currBooking.endDate);
+
+    const conflictErr = new Error("Sorry, this spot is already booked for the specified dates");
+    conflictErr.errors = {};
+    conflictErr.status = 403
+
+    if (currBooking.id !== booking.id) {
+      if (newStartDate >= oldStartDate && newStartDate <= oldEndDate) {
+        conflictErr.errors.startDate = "Start date conflicts with an existing booking";
+      };
+      if (newEndDate >= oldStartDate && newEndDate <= oldEndDate) {
+        conflictErr.errors.endDate = "End date conflicts with an existing booking";
+      };
+    };
+
+    if (conflictErr.errors.startDate || conflictErr.errors.endDate) {
+      throw conflictErr;
+    }
+  });
+
   await booking.set({
     startDate: newBookingInfo.startDate,
     endDate: newBookingInfo.endDate
-  })
-
+  });
   await booking.save();
+
   res.json(booking);
 });
 

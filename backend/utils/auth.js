@@ -109,7 +109,7 @@ const authorize = async function (req, res, next) {
 
   if (permission) return next();
   else {
-    const err = new Error('Authorization required');
+    const err = new Error('Forbidden');
     err.title = 'Authorization required';
     err.errors = { message: 'Authorization required' };
     err.status = 403;
