@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { jwtConfig } = require('../config');
-const { User, Spot, Review, Booking } = require('../db/models');
+const { User, Spot, Review, Booking, SpotImage, ReviewImage } = require('../db/models');
 
 const { secret, expiresIn } = jwtConfig;
 
@@ -138,18 +138,52 @@ const notOwner = async function (req, res, next) {
 
 const owner = async (req, res, next) => {
   const { user } = req;
-  const booking = await Booking.findByPk(req.params.bookingId);
-  const spot = await Spot.findByPk(booking.spotId);
+  const { bookingId, imageId } = req.params;
+  if (bookingId) {
+    const booking = await Booking.findByPk(bookingId);
+    const spot = await Spot.findByPk(booking.spotId);
 
-  if (user.id === spot.ownerId) return next();
-  else if (user.id === booking.userId) return next();
+    if (user.id === spot.ownerId) return next();
+    else if (user.id === booking.userId) return next();
+
+  } else if (imageId) {
+    const spotImage = await SpotImage.findByPk(imageId);
+    if (!spotImage) {
+      res.status(404);
+      return res.json({ "message": "Spot Image couldn't be found" })
+    };
+    const spot = await Spot.findByPk(spotImage.spotId);
+
+    if (!spot || user.id === spot.ownerId) return next();
+  }
+
+
+  const err = new Error('Forbidden');
+  err.title = 'Authorization required';
+  err.errors = { message: 'Authorization required' };
+  err.status = 403;
+  return next(err);
+};
+
+const reviewOwner = async (req, res, next) => {
+  const { user } = req;
+  const { imageId } = req.params;
+
+  const reviewImage = await ReviewImage.findByPk(imageId);
+  if (!reviewImage) {
+    res.status(404);
+    return res.json({ "message": "Review Image couldn't be found" })
+  };
+  const review = await Review.findByPk(reviewImage.reviewId);
+
+  if (!review || user.id === review.userId) return next()
   else {
     const err = new Error('Forbidden');
     err.title = 'Authorization required';
     err.errors = { message: 'Authorization required' };
     err.status = 403;
     return next(err);
-  }
-}
+  };
+};
 
-module.exports = { setTokenCookie, restoreUser, requireAuth, authorize, notOwner, owner };
+module.exports = { setTokenCookie, restoreUser, requireAuth, authorize, notOwner, owner, reviewOwner };
