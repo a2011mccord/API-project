@@ -1,12 +1,65 @@
 const express = require('express');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
-const { Op } = require('sequelize');
+const { Op, QueryError } = require('sequelize');
 
 const { requireAuth, authorize, notOwner } = require('../../utils/auth');
 const { Spot, SpotImage, Review, ReviewImage, User, Booking } = require('../../db/models');
 
 const router = express.Router();
+
+const validateQueryFilters = (queryFilters) => {
+  const { page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice } = queryFilters;
+  const err = new Error('Bad Request');
+  err.status = 400;
+  err.errors = {};
+
+  if (page < 1) {
+    err.errors.page = "Page must be greater than or equal to 1";
+  } else if (page > 10) {
+    err.errors.page = "Maximum amount of pages is 10";
+  };
+
+  if (size < 1) {
+    err.errors.size = "Size must be greater than or equal to 1";
+  } else if (size > 20) {
+    err.errors.size = "Maximum page size is 20";
+  };
+
+  if (minLat < -89 || minLat > 89) {
+    err.errors.minLat = "Minimum latitude is invalid"
+  };
+
+  if (maxLat < -89 || maxLat > 89) {
+    err.errors.maxLat = "Maximum latitude is invalid"
+  };
+
+  if (minLng < -179 || minLng > 179) {
+    err.errors.minLng = "Minimum longitude is invalid"
+  };
+
+  if (maxLng < -179 || maxLng > 179) {
+    err.errors.maxLng = "Maximum longitude is invalid"
+  };
+
+  if (minPrice < 0) {
+    err.errors.minPrice = "Minimum price must be greater than or equal to 0";
+  };
+
+  if (maxPrice < 0) {
+    err.errors.maxPrice = "Maximum price must be greater than or equal to 0";
+  };
+
+  if (minPrice !== undefined && maxPrice !== undefined && maxPrice < minPrice) {
+    err.errors.maxPrice = "Maximum price cannot be less than minimum price";
+  };
+
+  if (Object.keys(err.errors).length) {
+    return err;
+  } else {
+    return true;
+  }
+};
 
 const validateBookingInfo = [
   check('startDate')
@@ -248,7 +301,8 @@ router.get('/:spotId', async (req, res, next) => {
 });
 
 router.get('/', async (req, res, next) => {
-  const spots = await Spot.findAll({
+  let query = {
+    where: {},
     include: [
       {
         model: SpotImage
@@ -257,7 +311,52 @@ router.get('/', async (req, res, next) => {
         model: Review
       }
     ]
-  });
+  };
+
+  const page = req.query.page === undefined ? 1 : parseInt(req.query.page);
+  const size = req.query.size === undefined ? 20 : parseInt(req.query.size);
+  const { minLat, maxLat, minLng, maxLng, minPrice, maxPrice } = req.query;
+
+  const validationResult = validateQueryFilters({ page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice });
+
+  if (validationResult instanceof Error) {
+    next(validationResult);
+  }
+
+  query.limit = size;
+  query.offset = size * (page - 1);
+
+  if (minLat) {
+    query.where.lat = { [Op.gte]: minLat };
+  };
+  if (maxLat) {
+    query.where.lat = { [Op.lte]: maxLat };
+  };
+  if (minLat && maxLat) {
+    query.where.lat = { [Op.gte]: minLat, [Op.lte]: maxLat };
+  };
+
+  if (minLng) {
+    query.where.lng = { [Op.gte]: minLng };
+  };
+  if (maxLng) {
+    query.where.lng = { [Op.lte]: maxLng };
+  };
+  if (minLng && maxLng) {
+    query.where.lng = { [Op.gte]: minLng, [Op.lte]: maxLng };
+  };
+
+  if (minPrice) {
+    query.where.price = { [Op.gte]: minPrice };
+  };
+  if (maxPrice) {
+    query.where.price = { [Op.lte]: maxPrice };
+  };
+  if (minPrice && maxPrice) {
+    query.where.price = { [Op.gte]: minPrice, [Op.lte]: maxPrice };
+  };
+
+  const spots = await Spot.findAll(query);
 
   let spotsList = []
   spots.forEach(spot => {
