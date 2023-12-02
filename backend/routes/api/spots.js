@@ -118,12 +118,26 @@ const validateSpotInfo = [
   check('lat')
     .exists({ checkFalsy: true })
     .notEmpty()
-    .isDecimal({ min: -89, max: 89 })
+    .isDecimal()
+    .custom(value => {
+      if (value < -89 || value > 89) {
+        return false;
+      } else {
+        return true;
+      };
+    })
     .withMessage('Latitude is not valid'),
   check('lng')
     .exists({ checkFalsy: true })
     .notEmpty()
-    .isDecimal({ min: -179, max: 179 })
+    .isDecimal()
+    .custom(value => {
+      if (value < -179 || value > 179) {
+        return false;
+      } else {
+        return true;
+      };
+    })
     .withMessage('Longitude is not valid'),
   check('name')
     .exists({ checkFalsy: true })
