@@ -94,7 +94,7 @@ router.put('/:bookingId', requireAuth, authorize, validateBookingInfo, async (re
 
     const conflictErr = new Error("Sorry, this spot is already booked for the specified dates");
     conflictErr.errors = {};
-    conflictErr.status = 403
+    conflictErr.status = 403;
 
     if (currBooking.id !== booking.id) {
       if (newStartDate >= oldStartDate && newStartDate <= oldEndDate) {
@@ -103,11 +103,15 @@ router.put('/:bookingId', requireAuth, authorize, validateBookingInfo, async (re
       if (newEndDate >= oldStartDate && newEndDate <= oldEndDate) {
         conflictErr.errors.endDate = "End date conflicts with an existing booking";
       };
+      if (newStartDate < oldStartDate && newEndDate > oldEndDate) {
+        conflictErr.errors.startDate = "Start date conflicts with an existing booking";
+        conflictErr.errors.endDate = "End date conflicts with an existing booking";
+      };
     };
 
     if (conflictErr.errors.startDate || conflictErr.errors.endDate) {
       throw conflictErr;
-    }
+    };
   });
 
   await booking.set({

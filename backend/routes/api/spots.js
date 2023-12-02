@@ -118,12 +118,12 @@ const validateSpotInfo = [
   check('lat')
     .exists({ checkFalsy: true })
     .notEmpty()
-    .isDecimal()
+    .isDecimal({ min: -89, max: 89 })
     .withMessage('Latitude is not valid'),
   check('lng')
     .exists({ checkFalsy: true })
     .notEmpty()
-    .isDecimal()
+    .isDecimal({ min: -179, max: 179 })
     .withMessage('Longitude is not valid'),
   check('name')
     .exists({ checkFalsy: true })
@@ -137,7 +137,7 @@ const validateSpotInfo = [
   check('price')
     .exists({ checkFalsy: true })
     .notEmpty()
-    .isDecimal()
+    .isDecimal({ min: 0 })
     .withMessage('Price per day is required'),
   handleValidationErrors
 ];
@@ -421,6 +421,10 @@ router.post('/:spotId/bookings', requireAuth, notOwner, validateBookingInfo, asy
       conflictErr.errors.startDate = "Start date conflicts with an existing booking";
     };
     if (endDate >= oldStartDate && endDate <= oldEndDate) {
+      conflictErr.errors.endDate = "End date conflicts with an existing booking";
+    };
+    if (startDate < oldStartDate && endDate > oldEndDate) {
+      conflictErr.errors.startDate = "Start date conflicts with an existing booking";
       conflictErr.errors.endDate = "End date conflicts with an existing booking";
     };
 
