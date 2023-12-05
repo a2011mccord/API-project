@@ -151,7 +151,14 @@ const validateSpotInfo = [
   check('price')
     .exists({ checkFalsy: true })
     .notEmpty()
-    .isDecimal({ min: 0 })
+    .isDecimal()
+    .custom(value => {
+      if (value < 0) {
+        return false;
+      } else {
+        return true;
+      };
+    })
     .withMessage('Price per day is required'),
   handleValidationErrors
 ];
@@ -268,7 +275,9 @@ router.get('/current', requireAuth, async (req, res, next) => {
     delete spot.SpotImages
   });
 
-  res.json(spotsList);
+  res.json({
+    "Spots": spotsList
+  });
 });
 
 router.get('/:spotId', async (req, res, next) => {
@@ -402,7 +411,9 @@ router.get('/', async (req, res, next) => {
     delete spot.SpotImages
   });
 
-  res.json(spotsList);
+  res.json({
+    "Spots": spotsList
+  });
 });
 
 router.post('/:spotId/bookings', requireAuth, notOwner, validateBookingInfo, async (req, res, next) => {
