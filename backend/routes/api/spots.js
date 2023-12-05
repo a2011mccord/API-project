@@ -50,7 +50,7 @@ const validateQueryFilters = (queryFilters) => {
     err.errors.maxPrice = "Maximum price must be greater than or equal to 0";
   };
 
-  if (minPrice !== undefined && maxPrice !== undefined && maxPrice < minPrice) {
+  if (minPrice !== undefined && maxPrice !== undefined && Number(maxPrice) < Number(minPrice)) {
     err.errors.maxPrice = "Maximum price cannot be less than minimum price";
   };
 
