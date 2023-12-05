@@ -25,7 +25,7 @@ const validateQueryFilters = (queryFilters) => {
   } else if (size > 20) {
     err.errors.size = "Maximum page size is 20";
   };
-  console.log('**************', minLat)
+
   if (Number.isNaN(minLat) || minLat < -89 || minLat > 89) {
     err.errors.minLat = "Minimum latitude is invalid"
   };
@@ -339,12 +339,12 @@ router.get('/', async (req, res, next) => {
   const page = req.query.page === undefined || req.query.page === '' ? 1 : parseInt(req.query.page);
   const size = req.query.size === undefined || req.query.size === '' ? 20 : parseInt(req.query.size);
   let { minLat, maxLat, minLng, maxLng, minPrice, maxPrice } = req.query;
-  minLat = minLat ? Number(minLat) : NaN;
-  maxLat = maxLat ? Number(maxLat) : NaN;
-  minLng = minLng ? Number(minLng) : NaN;
-  maxLng = maxLng ? Number(maxLng) : NaN;
-  minPrice = minPrice ? Number(minPrice) : NaN;
-  maxPrice = maxPrice ? Number(maxPrice) : NaN;
+  if (minLat !== undefined) minLat = minLat === '' ? NaN : Number(minLat);
+  if (maxLat !== undefined) maxLat = maxLat === '' ? NaN : Number(maxLat);
+  if (minLng !== undefined) minLng = minLng === '' ? NaN : Number(minLng);
+  if (maxLng !== undefined) maxLng = maxLng === '' ? NaN : Number(maxLng);
+  if (minPrice !== undefined) minPrice = minPrice === '' ? NaN : Number(minPrice);
+  if (maxPrice !== undefined) maxPrice = maxPrice === '' ? NaN : Number(maxPrice);
 
   const validationResult = validateQueryFilters({ page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice });
 
