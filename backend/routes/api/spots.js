@@ -273,6 +273,10 @@ router.get('/current', requireAuth, async (req, res, next) => {
       spot.previewImage = "No preview image found"
     };
     delete spot.SpotImages
+
+    spot.lat = Number(spot.lat);
+    spot.lng = Number(spot.lng);
+    spot.price = Number(spot.price);
   });
 
   res.json({
@@ -319,6 +323,10 @@ router.get('/:spotId', async (req, res, next) => {
     spot.avgStarRating = "No reviews for this spot yet"
   };
   delete spot.Reviews;
+
+  spot.lat = Number(spot.lat);
+  spot.lng = Number(spot.lng);
+  spot.price = Number(spot.price);
 
   res.json(spot);
 });
@@ -415,6 +423,10 @@ router.get('/', async (req, res, next) => {
       spot.previewImage = "No preview image found"
     };
     delete spot.SpotImages
+
+    spot.lat = Number(spot.lat);
+    spot.lng = Number(spot.lng);
+    spot.price = Number(spot.price);
   });
 
   res.json({
@@ -523,6 +535,10 @@ router.post('/', requireAuth, validateSpotInfo, async (req, res, next) => {
   spotInfo.ownerId = user.id;
 
   const newSpot = await Spot.create(spotInfo);
+
+  newSpot.lat = Number(newSpot.lat);
+  newSpot.lng = Number(newSpot.lng);
+  newSpot.price = Number(newSpot.price);
 
   res.status(201);
   res.json(newSpot);

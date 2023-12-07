@@ -57,6 +57,10 @@ router.get('/current', requireAuth, async (req, res, next) => {
       review.Spot.previewImage = "No preview image found"
     };
     delete review.Spot.SpotImages
+
+    review.Spot.lat = Number(review.Spot.lat);
+    review.Spot.lng = Number(review.Spot.lng);
+    review.Spot.price = Number(review.Spot.price);
   });
 
   const response = {
