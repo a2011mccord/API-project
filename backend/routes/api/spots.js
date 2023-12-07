@@ -25,32 +25,32 @@ const validateQueryFilters = (queryFilters) => {
   } else if (size > 20) {
     err.errors.size = "Maximum page size is 20";
   };
-
-  if (minLat < -89 || minLat > 89) {
+  console.log('**************', minLat)
+  if (Number.isNaN(minLat) || minLat < -89 || minLat > 89) {
     err.errors.minLat = "Minimum latitude is invalid"
   };
 
-  if (maxLat < -89 || maxLat > 89) {
+  if (Number.isNaN(maxLat) || maxLat < -89 || maxLat > 89) {
     err.errors.maxLat = "Maximum latitude is invalid"
   };
 
-  if (minLng < -179 || minLng > 179) {
+  if (Number.isNaN(minLng) || minLng < -179 || minLng > 179) {
     err.errors.minLng = "Minimum longitude is invalid"
   };
 
-  if (maxLng < -179 || maxLng > 179) {
+  if (Number.isNaN(maxLng) || maxLng < -179 || maxLng > 179) {
     err.errors.maxLng = "Maximum longitude is invalid"
   };
 
-  if (minPrice < 0) {
+  if (Number.isNaN(minPrice) || minPrice < 0) {
     err.errors.minPrice = "Minimum price must be greater than or equal to 0";
   };
 
-  if (maxPrice < 0) {
+  if (Number.isNaN(maxPrice) || maxPrice < 0) {
     err.errors.maxPrice = "Maximum price must be greater than or equal to 0";
   };
 
-  if (minPrice !== undefined && maxPrice !== undefined && Number(maxPrice) < Number(minPrice)) {
+  if (minPrice !== NaN && maxPrice !== NaN && maxPrice < minPrice) {
     err.errors.maxPrice = "Maximum price cannot be less than minimum price";
   };
 
@@ -336,15 +336,21 @@ router.get('/', async (req, res, next) => {
     ]
   };
 
-  const page = req.query.page === undefined ? 1 : parseInt(req.query.page);
-  const size = req.query.size === undefined ? 20 : parseInt(req.query.size);
-  const { minLat, maxLat, minLng, maxLng, minPrice, maxPrice } = req.query;
+  const page = req.query.page === undefined || req.query.page === '' ? 1 : parseInt(req.query.page);
+  const size = req.query.size === undefined || req.query.size === '' ? 20 : parseInt(req.query.size);
+  let { minLat, maxLat, minLng, maxLng, minPrice, maxPrice } = req.query;
+  minLat = minLat ? Number(minLat) : NaN;
+  maxLat = maxLat ? Number(maxLat) : NaN;
+  minLng = minLng ? Number(minLng) : NaN;
+  maxLng = maxLng ? Number(maxLng) : NaN;
+  minPrice = minPrice ? Number(minPrice) : NaN;
+  maxPrice = maxPrice ? Number(maxPrice) : NaN;
 
   const validationResult = validateQueryFilters({ page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice });
 
   if (validationResult instanceof Error) {
     next(validationResult);
-  }
+  };
 
   query.limit = size;
   query.offset = size * (page - 1);
