@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../store/session";
 import { Navigate } from "react-router-dom";
+import './LoginFormPage.css';
 
 function LoginFormPage() {
   const dispatch = useDispatch();
