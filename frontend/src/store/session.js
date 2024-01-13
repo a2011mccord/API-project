@@ -8,9 +8,8 @@ const setUser = user => ({
   user
 });
 
-const removeUser = user => ({
-  type: REMOVE_USER,
-  user
+const removeUser = () => ({
+  type: REMOVE_USER
 });
 
 export const loginUser = user => async dispatch => {
@@ -26,7 +25,7 @@ export const loginUser = user => async dispatch => {
   if (res.ok) {
     const data = await res.json();
     dispatch(setUser(data.user));
-    return user;
+    return res;
   }
 };
 
@@ -36,6 +35,7 @@ export const restoreUser = () => async dispatch => {
   if (res.ok) {
     const data = await res.json();
     dispatch(setUser(data.user));
+    return res;
   }
 };
 
@@ -55,7 +55,7 @@ export const signup = user => async dispatch => {
   if (res.ok) {
     const data = await res.json();
     dispatch(setUser(data.user));
-    return data;
+    return res;
   }
 };
 
@@ -64,7 +64,7 @@ const initialState = { user: null };
 const sessionReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_USER: {
-      return { ...state, user: { ...action.user } }
+      return { ...state, user: action.user }
     }
     case REMOVE_USER: {
       return { ...state, user: null }
