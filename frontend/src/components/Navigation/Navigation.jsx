@@ -1,11 +1,9 @@
 import { NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ProfileButton from "./ProfileButton";
-import * as sessionActions from '../../store/session';
 import './Navigation.css';
 
 function Navigation({ isLoaded }) {
-  const dispatch = useDispatch();
   const sessionUser = useSelector(state => state.session.user);
 
   const sessionLinks = sessionUser ? (
