@@ -19,7 +19,9 @@ function LoginFormModal() {
       .then(closeModal)
       .catch(async res => {
         const data = await res.json();
-        if (data?.errors) setErrors(data.errors);
+        console.log(data)
+        if (data?.message) setErrors(data);
+        console.log(errors)
       });
   };
 
@@ -39,13 +41,13 @@ function LoginFormModal() {
         <label>
           Password
           <input
-            type="text"
+            type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
           />
         </label>
-        {errors.credential && <p>{errors.credential}</p>}
+        {errors.message && (<p className="err">{errors.message}</p>)}
         <button type="submit">Login</button>
       </form>
     </>
