@@ -26,7 +26,7 @@ function LoginFormModal() {
   };
 
   return (
-    <>
+    <div className="login-form">
       <h1>Log In</h1>
       <form onSubmit={handleSubmit}>
         <label>
@@ -50,7 +50,7 @@ function LoginFormModal() {
         {errors.message && (<p className="err">{errors.message}</p>)}
         <button type="submit">Login</button>
       </form>
-    </>
+    </div>
   )
 }
 

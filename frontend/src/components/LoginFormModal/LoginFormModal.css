@@ -1,0 +1,45 @@
+.err {
+  color: red;
+  font-weight: bold;
+}
+
+#modal-content {
+  border-radius: 15px;
+  position: relative;
+  bottom: 100px;
+  width: 40%;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.login-form > h1 {
+  text-align: center;
+  margin-top: 0;
+}
+
+.login-form > form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.login-form input {
+  background-color: #d3e2fa;
+}
+
+.login-form button {
+  margin-top: 10px;
+  background-color: #FF5A5F;
+  color: white;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}

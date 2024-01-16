@@ -38,7 +38,7 @@ function SignupFormModal() {
   };
 
   return (
-    <>
+    <div className="signup-form">
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
         <label>
@@ -103,7 +103,7 @@ function SignupFormModal() {
         {errors.confirmPassword && <p className="err">{errors.confirmPassword}</p>}
         <button type="submit">Signup</button>
       </form>
-    </>
+    </div>
   );
 }
 
