@@ -1,3 +1,5 @@
+import './SpotDetails.css';
+
 function SpotDetails() {
   return (
     <>
