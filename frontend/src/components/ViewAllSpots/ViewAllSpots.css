@@ -1,0 +1,50 @@
+.spots-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card-wrapper {
+  border: none;
+  padding: 0;
+  display: flex;
+}
+
+.spot-tile {
+  border: 1px solid black;
+  display: flex;
+  flex-wrap: wrap;
+  width: 350px;
+  margin-left: 25px;
+  margin-bottom: 40px;
+}
+
+.spot-tile:hover {
+  cursor: pointer;
+}
+
+[data-title]:after {
+  content: attr(data-title);
+  visibility: hidden;
+  position: absolute;
+}
+
+[data-title]:hover:after {
+  visibility: visible;
+}
+
+#preview-image {
+  width: 100%;
+}
+
+#city-state {
+  width: 80%;
+}
+
+#rating {
+  width: 20%;
+  text-align: right;
+}
+
+#price {
+  width: 100%;
+}
