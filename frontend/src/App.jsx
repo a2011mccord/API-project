@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import Navigation from "./components/Navigation";
 import { restoreUser } from "./store/session";
+import Navigation from "./components/Navigation";
+import ViewAllSpots from "./components/ViewAllSpots/ViewAllSpots";
 
 function Layout() {
   const dispatch = useDispatch();
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <h1>Welcome!</h1>
+        element: <ViewAllSpots />
       }
     ]
   }
