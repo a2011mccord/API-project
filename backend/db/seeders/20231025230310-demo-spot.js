@@ -21,7 +21,7 @@ module.exports = {
         lat: 34.138058,
         lng: -118.287849,
         name: 'Joyous Spot',
-        description: 'This home offers joy and sunshine.',
+        description: 'This home offers joy and sunshine. Lorem ipsum dolor sit amet consectetur adipisicing elit. Id quia ducimus perferendis quis eveniet! Dolorem culpa, nulla maxime ullam illo dignissimos! Ducimus ea odit rem consequatur deserunt, ipsa sunt dolore perferendis, exercitationem dolores similique facere, ullam soluta autem officiis et adipisci temporibus! Veniam amet repudiandae perferendis quidem debitis rem tenetur.',
         price: 149.99
       },
       {
@@ -33,7 +33,7 @@ module.exports = {
         lat: 35.260445,
         lng: -80.774849,
         name: 'Second Spot',
-        description: 'Fun place to ride skooters.',
+        description: 'Fun place to ride skooters. Lorem ipsum dolor sit amet consectetur adipisicing elit. Id quia ducimus perferendis quis eveniet! Dolorem culpa, nulla maxime ullam illo dignissimos! Ducimus ea odit rem consequatur deserunt, ipsa sunt dolore perferendis, exercitationem dolores similique facere, ullam soluta autem officiis et adipisci temporibus! Veniam amet repudiandae perferendis quidem debitis rem tenetur.',
         price: 100
       },
       {
@@ -45,7 +45,7 @@ module.exports = {
         lat: 43.029617,
         lng: -76.296463,
         name: 'Third Spot',
-        description: "It's not an empty field, but it is plain.",
+        description: "It's not an empty field, but it is plain. Lorem ipsum dolor sit amet consectetur adipisicing elit. Id quia ducimus perferendis quis eveniet! Dolorem culpa, nulla maxime ullam illo dignissimos! Ducimus ea odit rem consequatur deserunt, ipsa sunt dolore perferendis, exercitationem dolores similique facere, ullam soluta autem officiis et adipisci temporibus! Veniam amet repudiandae perferendis quidem debitis rem tenetur.",
         price: 119.49
       },
       {
