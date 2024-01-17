@@ -5,6 +5,7 @@
 nav {
   display: flex;
   width: 100%;
+  border-bottom: 1px solid lightgray;
 }
 
 nav > ul {
@@ -16,6 +17,15 @@ nav > ul {
 
 nav > ul > li {
   list-style: none;
+}
+
+nav > ul > div {
+  display: flex;
+  flex-direction: row;
+}
+
+.create-spot {
+  margin-right: 15px;
 }
 
 .profile {
@@ -32,9 +42,12 @@ nav > ul > li {
 }
 
 .profile-dropdown {
-  padding: 0;
   position: absolute;
   top: 60px;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: lightgray;
 }
 
 .profile-dropdown > li {
@@ -43,4 +56,11 @@ nav > ul > li {
 
 .profile-dropdown button {
   width: 100%;
+}
+
+#manage-spots {
+  margin: 3px 0;
+  padding: 2px 0;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
