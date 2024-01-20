@@ -25,11 +25,18 @@ function SpotDetails() {
             <h3>{`${spotDetails.city}, ${spotDetails.state}, ${spotDetails.country}`}</h3>
           </header>
           <div className="images-wrapper">
-            <div id="preview-image">1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
+            <div id="preview-image">
+              <img src={spotDetails.SpotImages.find(image => image.preview).url} />
+            </div>
+            {spotDetails.SpotImages.map(image => {
+              if (!image.preview) {
+                return (
+                  <div key={image.id}>
+                    <img src={image.url} />
+                  </div>
+                )
+              }
+            })}
           </div>
           <section>
             <h2>{`Hosted by ${spotDetails.Owner?.firstName} ${spotDetails.Owner?.lastName}`}</h2>
@@ -42,7 +49,7 @@ function SpotDetails() {
               {spotDetails.avgStarRating !== "No reviews for this spot yet" ?
                 spotDetails.avgStarRating : "New"}
               {' '}&#x2022;{' '}
-              {`${spotDetails.numReviews} ${spotDetails.numReviews > 1 ? "reviews" : "review"}`}
+              {`${spotDetails.numReviews} ${spotDetails.numReviews === 1 ? "review" : "reviews"}`}
             </div>
             <button
               onClick={() => alert("Feature coming soon...")}
@@ -57,7 +64,7 @@ function SpotDetails() {
               {spotDetails.avgStarRating !== "No reviews for this spot yet" ?
                 spotDetails.avgStarRating : "New"}
               {' '}&#x2022;{' '}
-              {`${spotDetails.numReviews} ${spotDetails.numReviews > 1 ? "reviews" : "review"}`}
+              {`${spotDetails.numReviews} ${spotDetails.numReviews === 1 ? "review" : "reviews"}`}
             </div>
             {
               spotReviews && spotReviews.map(review => {
