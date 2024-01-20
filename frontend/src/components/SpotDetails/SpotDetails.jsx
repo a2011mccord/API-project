@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { fetchSpotDetails } from "../../store/spotsReducer";
 import { fetchReviewsBySpot, selectReviewsArray } from "../../store/reviewsReducer";
+import OpenModalButton from "../OpenModalButton";
+import PostReviewModal from "../PostReviewModal";
 import './SpotDetails.css';
 
 function SpotDetails() {
@@ -10,6 +12,7 @@ function SpotDetails() {
   const { spotId } = useParams();
   const spotDetails = useSelector(state => state.spotsState.spotDetails);
   const spotReviews = useSelector(selectReviewsArray);
+  const sessionUser = useSelector(state => state.session.user)
 
   useEffect(() => {
     dispatch(fetchSpotDetails(spotId));
@@ -66,6 +69,16 @@ function SpotDetails() {
               {' '}&#x2022;{' '}
               {`${spotDetails.numReviews} ${spotDetails.numReviews === 1 ? "review" : "reviews"}`}
             </div>
+
+            {
+              sessionUser && sessionUser.id !== spotDetails.ownerId &&
+              !spotReviews.find(review => sessionUser.id === review.userId) &&
+              <OpenModalButton
+                buttonText='Post Your Review'
+                modalComponent={<PostReviewModal />}
+              />
+            }
+
             {
               spotReviews && spotReviews.map(review => {
                 return (

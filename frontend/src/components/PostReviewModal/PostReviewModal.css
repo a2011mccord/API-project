@@ -1,0 +1,24 @@
+.review-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.review-form span {
+  display: flex;
+  flex-direction: row;
+}
+
+.review-form input[type=radio] {
+  display: none;
+}
+
+.review-form i {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.review-form button {
+  width: fit-content;
+}
