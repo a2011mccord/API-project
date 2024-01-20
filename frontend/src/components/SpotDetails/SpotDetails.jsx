@@ -10,7 +10,6 @@ function SpotDetails() {
   const { spotId } = useParams();
   const spotDetails = useSelector(state => state.spotsState.spotDetails);
   const spotReviews = useSelector(selectReviewsArray);
-  console.log(spotDetails)
 
   useEffect(() => {
     dispatch(fetchSpotDetails(spotId));
@@ -41,7 +40,7 @@ function SpotDetails() {
             <div className="ratings">
               <i className="fa-solid fa-star" />
               {spotDetails.avgStarRating !== "No reviews for this spot yet" ?
-                spotDetails.avgStarRating : "N/A"}
+                spotDetails.avgStarRating : "New"}
               {' '}&#x2022;{' '}
               {`${spotDetails.numReviews} ${spotDetails.numReviews > 1 ? "reviews" : "review"}`}
             </div>
@@ -56,7 +55,7 @@ function SpotDetails() {
             <div className="ratings">
               <i className="fa-solid fa-star" />
               {spotDetails.avgStarRating !== "No reviews for this spot yet" ?
-                spotDetails.avgStarRating : "N/A"}
+                spotDetails.avgStarRating : "New"}
               {' '}&#x2022;{' '}
               {`${spotDetails.numReviews} ${spotDetails.numReviews > 1 ? "reviews" : "review"}`}
             </div>

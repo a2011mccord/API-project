@@ -10,7 +10,6 @@
 }
 
 .spot-tile {
-  border: 1px solid black;
   display: flex;
   flex-wrap: wrap;
   width: 350px;
