@@ -4,7 +4,7 @@ import { loginUser } from "../../store/session";
 import { useModal } from "../../context/Modal";
 import './LoginFormModal.css';
 
-function LoginFormModal() {
+function LoginFormModal({ navigateHome }) {
   const dispatch = useDispatch();
   const [credential, setCredential] = useState("");
   const [password, setPassword] = useState("");
@@ -17,11 +17,10 @@ function LoginFormModal() {
 
     return dispatch(loginUser({ credential, password }))
       .then(closeModal)
+      .then(navigateHome)
       .catch(async res => {
         const data = await res.json();
-        console.log(data)
         if (data?.message) setErrors(data);
-        console.log(errors)
       });
   };
 
@@ -48,7 +47,7 @@ function LoginFormModal() {
           />
         </label>
         {errors.message && (<p className="err">{errors.message}</p>)}
-        <button type="submit">Login</button>
+        <button type="submit" disabled={credential.length < 4 || password.length < 6}>Login</button>
       </form>
     </div>
   )
