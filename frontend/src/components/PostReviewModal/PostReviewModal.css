@@ -1,0 +1,56 @@
+.review-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.review-form h2 {
+  margin: 0;
+}
+
+.review-form textarea {
+  width: 100%;
+  height: 7rem;
+  resize: none;
+  margin-top: 10px;
+}
+
+.review-form .stars {
+  display: flex;
+  align-items: center;
+}
+
+.review-form span {
+  display: flex;
+  flex-direction: row;
+  margin: 15px 0;
+  margin-right: 5px;
+}
+
+.review-form input[type=radio] {
+  display: none;
+}
+
+.review-form i {
+  cursor: pointer;
+  font-size: 23px;
+}
+
+.review-form button {
+  width: 100%;
+  background-color: #FF5A5F;
+  box-shadow: 3px 3px 2px black;
+  color: white;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
+}
+
+.review-form button:disabled {
+  background-color: white;
+  border: 1px solid gray;
+  color: gray;
+  box-shadow: 3px 3px 2px gray;
+  cursor: default;
+}

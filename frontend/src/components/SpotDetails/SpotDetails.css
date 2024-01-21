@@ -88,3 +88,11 @@
 .reviews-wrapper .ratings {
   font-size: larger;
 }
+
+.reviews-wrapper button {
+  background-color: rgb(115, 115, 115);
+  box-shadow: 2px 2px 2px black;
+  color: white;
+  cursor: pointer;
+  margin: 10px 0;
+}
