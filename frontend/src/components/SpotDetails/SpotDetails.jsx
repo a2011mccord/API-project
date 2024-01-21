@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchSpotDetails } from "../../store/spotsReducer";
 import { fetchReviewsBySpot, selectReviewsArray } from "../../store/reviewsReducer";
 import OpenModalButton from "../OpenModalButton";
@@ -9,6 +9,7 @@ import './SpotDetails.css';
 
 function SpotDetails() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { spotId } = useParams();
   const spotDetails = useSelector(state => state.spotsState.spotDetails);
   const spotReviews = useSelector(selectReviewsArray);
@@ -29,9 +30,9 @@ function SpotDetails() {
           </header>
           <div className="images-wrapper">
             <div id="preview-image">
-              <img src={spotDetails.SpotImages.find(image => image.preview).url} />
+              <img src={spotDetails.SpotImages?.find(image => image.preview).url} />
             </div>
-            {spotDetails.SpotImages.map(image => {
+            {spotDetails.SpotImages?.map(image => {
               if (!image.preview) {
                 return (
                   <div key={image.id}>
@@ -75,15 +76,18 @@ function SpotDetails() {
               !spotReviews.find(review => sessionUser.id === review.userId) &&
               <OpenModalButton
                 buttonText='Post Your Review'
-                modalComponent={<PostReviewModal />}
+                modalComponent={<PostReviewModal spotId={spotId} />}
+                onModalClose={() => navigate(`/spots/${spotId}`)}
               />
             }
+
+            {!spotReviews.length && <p>Be the first to post a review!</p>}
 
             {
               spotReviews && spotReviews.map(review => {
                 return (
                   <div key={review.id}>
-                    <h3>{review.User.firstName}</h3>
+                    <h3>{review.User?.firstName}</h3>
                     <span>{review.createdAt}</span>
                     <p>{review.review}</p>
                   </div>
