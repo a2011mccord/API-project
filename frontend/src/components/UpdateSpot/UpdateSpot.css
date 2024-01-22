@@ -1,0 +1,36 @@
+.update-spot-form {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  margin: 0 auto;
+}
+
+.update-spot-form h2 {
+  margin: 0;
+}
+
+.update-spot-form p {
+  margin-top: 0;
+}
+
+.update-spot-form .bar {
+  margin: 20px 0;
+}
+
+.update-spot-form button {
+  width: fit-content;
+  margin: 0 auto;
+  background-color: #FF5A5F;
+  box-shadow: 3px 3px 2px black;
+  color: white;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
+}
+
+.update-spot-form button:disabled {
+  background-color: white;
+  border: 1px solid gray;
+  color: gray;
+  box-shadow: 3px 3px 2px gray;
+}

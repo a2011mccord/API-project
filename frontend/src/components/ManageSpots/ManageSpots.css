@@ -1,0 +1,29 @@
+.manage-spots {
+  margin-bottom: 20px;
+}
+
+.manage-spots h1 {
+  margin-bottom: 0;
+}
+
+.manage-spots button, .spots-wrapper button {
+  background-color: rgb(115, 115, 115);
+  box-shadow: 2px 2px 2px black;
+  color: white;
+  cursor: pointer;
+  font-size: large;
+}
+
+.spots-wrapper .spot-tile {
+  margin: 0;
+}
+
+.spot-tile-wrapper {
+  margin-left: 25px;
+  margin-bottom: 40px;
+}
+
+.spot-tile-wrapper button {
+  margin-top: 20px;
+  margin-right: 10px;
+}
