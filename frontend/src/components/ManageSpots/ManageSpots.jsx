@@ -16,11 +16,11 @@ function ManageSpots() {
 
   return (
     <>
-      <header className="manage-spots">
+      <header className="manage-spots-header">
         <h1>Manage Your Spots</h1>
         <button onClick={() => navigate('/spots/new')}>Create a New Spot</button>
       </header>
-      <div className="spots-wrapper">
+      <div className="manage-spots-wrapper">
         {
           spots && spots.map(spot => {
             return (
