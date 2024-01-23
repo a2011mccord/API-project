@@ -91,7 +91,7 @@ function SpotDetails() {
                     <h3>{review.User?.firstName}</h3>
                     <span>{review.createdAt}</span>
                     <p>{review.review}</p>
-                    {sessionUser.id === review.userId &&
+                    {sessionUser && sessionUser.id === review.userId &&
                       <OpenModalButton
                         buttonText='Delete'
                         modalComponent={<DeleteReviewModal reviewId={review.id} />}
