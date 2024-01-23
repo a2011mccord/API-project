@@ -1,0 +1,34 @@
+.manage-spots-header {
+  margin-bottom: 20px;
+}
+
+.manage-spots-header h1 {
+  margin-bottom: 0;
+}
+
+.manage-spots-header button, .manage-spots-wrapper button {
+  background-color: rgb(115, 115, 115);
+  box-shadow: 2px 2px 2px black;
+  color: white;
+  cursor: pointer;
+  font-size: large;
+}
+
+.manage-spots-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.manage-spots-wrapper .spot-tile {
+  margin: 0;
+}
+
+.spot-tile-wrapper {
+  margin-left: 25px;
+  margin-bottom: 40px;
+}
+
+.spot-tile-wrapper button {
+  margin-top: 20px;
+  margin-right: 10px;
+}
