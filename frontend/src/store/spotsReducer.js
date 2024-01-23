@@ -7,6 +7,7 @@ const LOAD_CURRENT_SPOTS = 'spots/loadCurrentSpots';
 const ADD_SPOT = 'spots/addSpot';
 const ADD_SPOT_IMAGE = 'spots/addSpotImage';
 const UPDATE_SPOT = 'spots/updateSpot';
+const REMOVE_SPOT = 'spots/removeSpot';
 
 const loadSpots = spots => ({
   type: LOAD_SPOTS,
@@ -38,6 +39,11 @@ const updateSpot = spot => ({
   type: UPDATE_SPOT,
   spot
 });
+
+const removeSpot = spot => ({
+  type: REMOVE_SPOT,
+  spot
+})
 
 export const fetchSpots = () => async dispatch => {
   const res = await fetch('/api/spots');
@@ -108,6 +114,18 @@ export const editSpot = (spotId, payload) => async dispatch => {
   }
 };
 
+export const deleteSpot = spotId => async dispatch => {
+  const res = await csrfFetch(`/api/spots/${spotId}`, {
+    method: 'DELETE'
+  })
+
+  if (res.ok) {
+    const removedSpot = await res.json();
+    dispatch(removeSpot(removedSpot));
+    return removedSpot;
+  }
+}
+
 const selectedSpots = state => state.spotsState.spots;
 export const selectSpotsArray = createSelector(selectedSpots, spots => Object.values(spots));
 
@@ -160,6 +178,13 @@ const spotsReducer = (state = initialState, action) => {
       const newState = { ...state, spots: { ...state.spots } };
 
       newState.spots[action.spot.id] = action.spot;
+
+      return newState;
+    }
+    case REMOVE_SPOT: {
+      const newState = { ...state, spots: { ...state.spots } };
+
+      delete newState.spots[action.spot.id];
 
       return newState;
     }
