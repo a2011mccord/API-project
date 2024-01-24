@@ -1,0 +1,30 @@
+.delete-spot-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.delete-spot-modal h1 {
+  margin: 0;
+}
+
+.delete-button, .keep-button {
+  width: 100%;
+  padding: 10px;
+}
+
+.delete-button {
+  margin-bottom: 10px;
+  background-color: #FF5A5F;
+  box-shadow: 3px 3px 2px black;
+  color: white;
+  cursor: pointer;
+}
+
+.keep-button {
+  background-color: rgb(115, 115, 115);
+  box-shadow: 3px 3px 2px black;
+  color: white;
+  cursor: pointer;
+}

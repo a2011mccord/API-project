@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchCurrentSpots, selectSpotsArray } from "../../store/spotsReducer";
+import OpenModalButton from "../OpenModalButton";
+import DeleteSpotModal from "../DeleteSpotModal";
 import './ManageSpots.css';
 
 function ManageSpots() {
@@ -41,7 +43,10 @@ function ManageSpots() {
                 </div>
                 <div>
                   <button onClick={() => navigate(`/spots/${spot.id}/edit`)}>Update</button>
-                  <button>Delete</button>
+                  <OpenModalButton
+                    buttonText='Delete'
+                    modalComponent={<DeleteSpotModal spotId={spot.id} />}
+                  />
                 </div>
               </div>
             )
