@@ -1,0 +1,10 @@
+.delete-review-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.delete-review-modal h1 {
+  margin: 0;
+}

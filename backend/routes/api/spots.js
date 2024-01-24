@@ -566,10 +566,11 @@ router.put('/:spotId', requireAuth, authorize, validateSpotInfo, async (req, res
 
 router.delete('/:spotId', requireAuth, authorize, async (req, res, next) => {
   const spot = await Spot.findByPk(req.params.spotId);
+  const spotCopy = spot;
 
   spot.destroy();
 
-  res.json({ 'message': 'Successfully deleted' });
+  res.json(spotCopy);
 });
 
 module.exports = router

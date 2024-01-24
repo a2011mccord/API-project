@@ -1,23 +1,29 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { createSpot, createSpotImage } from '../../store/spotsReducer';
-import './CreateSpot.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { fetchSpotDetails, editSpot } from '../../store/spotsReducer';
+import './UpdateSpot.css';
 
-function CreateSpot() {
+function UpdateSpot() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [country, setCountry] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [lat, setLat] = useState('');
-  const [lng, setLng] = useState('');
-  const [description, setDescription] = useState('');
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
+  const { spotId } = useParams();
+  const spotDetails = useSelector(state => state.spotsState.spotDetails);
+  const [country, setCountry] = useState(spotDetails.country);
+  const [address, setAddress] = useState(spotDetails.address);
+  const [city, setCity] = useState(spotDetails.city);
+  const [state, setState] = useState(spotDetails.state);
+  const [lat, setLat] = useState(spotDetails.lat);
+  const [lng, setLng] = useState(spotDetails.lng);
+  const [description, setDescription] = useState(spotDetails.description);
+  const [name, setName] = useState(spotDetails.name);
+  const [price, setPrice] = useState(spotDetails.price);
   const [images, setImages] = useState({ previewImage: '' });
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    dispatch(fetchSpotDetails(spotId))
+  }, [dispatch, spotId])
 
   useEffect(() => {
     const errs = {};
@@ -49,44 +55,12 @@ function CreateSpot() {
     if (!price) {
       errs.price = "Price is required"
     }
-    if (!images.previewImage.length) {
-      errs.previewImage = "Preview image is required"
-    }
+    // if (!images.previewImage.length) {
+    //   errs.previewImage = "Preview image is required"
+    // }
 
     setErrors(errs);
-  }, [country, address, city, state, lat, lng, description, name, price, images])
-
-  const createSpotImages = spotId => {
-    for (const image in images) {
-      if (image === 'previewImage') {
-        dispatch(createSpotImage(spotId, {
-          'url': images[image],
-          'preview': true
-        }))
-      } else {
-        dispatch(createSpotImage(spotId, {
-          'url': images[image],
-          'preview': false
-        }))
-      }
-    }
-    return spotId;
-  };
-
-  const reset = spotId => {
-    setCountry('');
-    setAddress('');
-    setCity('');
-    setState('');
-    setLat('');
-    setLng('');
-    setDescription('');
-    setName('');
-    setPrice('');
-    setImages({ previewImage: '' });
-
-    navigate(`/spots/${spotId}`)
-  };
+  }, [country, address, city, state, lat, lng, description, name, price])
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -103,19 +77,18 @@ function CreateSpot() {
       price
     }
 
-    return dispatch(createSpot(payload))
-      .then(newSpot => createSpotImages(newSpot.id))
-      .then(spotId => reset(spotId))
+    return dispatch(editSpot(spotId, payload))
+      .then(() => navigate(`/spots/${spotId}`))
       .catch(async res => {
         const data = await res.json();
         if (data?.errors) setErrors(data.errors);
       });
-  }
+  };
 
   return (
     <>
-      <form onSubmit={handleSubmit} className='create-spot-form'>
-        <h1>Create a New Spot</h1>
+      <form onSubmit={handleSubmit} className='update-spot-form'>
+        <h1>Update your Spot</h1>
 
         <div className='location'>
           <h2>Where&apos;s your place located?</h2>
@@ -254,7 +227,6 @@ function CreateSpot() {
             type="text"
             name='preview-image'
             placeholder='Preview Image URL'
-            required
             value={images.previewImage}
             onChange={e => setImages({ ...images, previewImage: e.target.value })}
           />
@@ -291,10 +263,10 @@ function CreateSpot() {
 
         <div className='bar' />
 
-        <button disabled={Object.values(errors).length}>Create Spot</button>
+        <button disabled={Object.values(errors).length}>Update Spot</button>
       </form>
     </>
   )
 }
 
-export default CreateSpot;
+export default UpdateSpot;

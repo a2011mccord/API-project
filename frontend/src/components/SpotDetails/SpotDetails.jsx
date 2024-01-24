@@ -5,6 +5,7 @@ import { fetchSpotDetails } from "../../store/spotsReducer";
 import { fetchReviewsBySpot, selectReviewsArray } from "../../store/reviewsReducer";
 import OpenModalButton from "../OpenModalButton";
 import PostReviewModal from "../PostReviewModal";
+import DeleteReviewModal from "../DeleteReviewModal";
 import './SpotDetails.css';
 
 function SpotDetails() {
@@ -90,6 +91,13 @@ function SpotDetails() {
                     <h3>{review.User?.firstName}</h3>
                     <span>{review.createdAt}</span>
                     <p>{review.review}</p>
+                    {sessionUser && sessionUser.id === review.userId &&
+                      <OpenModalButton
+                        buttonText='Delete'
+                        modalComponent={<DeleteReviewModal reviewId={review.id} />}
+                        onModalClose={() => navigate(`/spots/${spotId}`)}
+                      />
+                    }
                   </div>
                 )
               })
