@@ -39,13 +39,13 @@ function SpotDetails() {
           </header>
           <div className="images-wrapper">
             <div id="preview-image-wrapper">
-              <img src={spotDetails.SpotImages?.find(image => image.preview).url} />
+              <img src={spotDetails.SpotImages?.find(image => image.preview)?.url} />
             </div>
             {spotDetails.SpotImages?.map(image => {
               if (!image.preview) {
                 return (
                   <div key={image.id}>
-                    <img src={image.url} />
+                    <img src={image?.url} />
                   </div>
                 )
               }
@@ -60,9 +60,13 @@ function SpotDetails() {
             <div className="ratings">
               <i className="fa-solid fa-star" />
               {spotDetails.avgStarRating !== "No reviews for this spot yet" ?
-                spotDetails.avgStarRating : "New"}
-              {' '}&#x2022;{' '}
-              {`${spotDetails.numReviews} ${spotDetails.numReviews === 1 ? "review" : "reviews"}`}
+                spotDetails.avgStarRating?.toPrecision(2) : "New"}
+              {spotDetails.avgStarRating !== "No reviews for this spot yet" &&
+                <>
+                  {' '}&#x2022;{' '}
+                  {`${spotDetails.numReviews} ${spotDetails.numReviews === 1 ? "review" : "reviews"}`}
+                </>
+              }
             </div>
             <button
               onClick={() => alert("Feature coming soon...")}
@@ -75,9 +79,13 @@ function SpotDetails() {
             <div className="ratings">
               <i className="fa-solid fa-star" />
               {spotDetails.avgStarRating !== "No reviews for this spot yet" ?
-                spotDetails.avgStarRating : "New"}
-              {' '}&#x2022;{' '}
-              {`${spotDetails.numReviews} ${spotDetails.numReviews === 1 ? "review" : "reviews"}`}
+                spotDetails.avgStarRating?.toPrecision(2) : "New"}
+              {spotDetails.avgStarRating !== "No reviews for this spot yet" &&
+                <>
+                  {' '}&#x2022;{' '}
+                  {`${spotDetails.numReviews} ${spotDetails.numReviews === 1 ? "review" : "reviews"}`}
+                </>
+              }
             </div>
 
             {
@@ -100,7 +108,6 @@ function SpotDetails() {
                 return (
                   <div key={review.id}>
                     <h3>{review.User?.firstName}</h3>
-                    {console.log(createdAt)}
                     <span>{`${MONTHS[createdAt.getMonth()]} ${createdAt.getFullYear()}`}</span>
                     <p>{review.review}</p>
                     {sessionUser && sessionUser.id === review.userId &&

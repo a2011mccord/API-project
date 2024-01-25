@@ -6,6 +6,7 @@ nav {
   display: flex;
   width: 100%;
   border-bottom: 1px solid lightgray;
+  margin-bottom: 20px;
 }
 
 nav > ul {
@@ -63,4 +64,9 @@ nav > ul > div {
   padding: 2px 0;
   border-top: 1px solid black;
   border-bottom: 1px solid black;
+}
+
+#logo {
+  width: 150px;
+  cursor: pointer;
 }

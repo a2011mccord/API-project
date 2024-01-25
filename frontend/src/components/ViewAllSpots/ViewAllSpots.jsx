@@ -29,7 +29,7 @@ function ViewAllSpots() {
               <div id="rating">
                 <i className="fa-solid fa-star" />
                 {spot.avgRating !== "No reviews for this spot yet" ?
-                  spot.avgRating : "New"}
+                  spot.avgRating.toPrecision(2) : "New"}
               </div>
               <div id="price">{`$${spot.price} night`}</div>
             </div>
