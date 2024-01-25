@@ -102,4 +102,5 @@ form label {
   border: 1px solid gray;
   color: gray;
   box-shadow: 3px 3px 2px gray;
+  cursor: default;
 }

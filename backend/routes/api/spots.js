@@ -548,7 +548,7 @@ router.put('/:spotId', requireAuth, authorize, validateSpotInfo, async (req, res
   const spot = await Spot.findByPk(req.params.spotId);
   const newSpotInfo = req.body;
 
-  await spot.set({
+  await spot.update({
     address: newSpotInfo.address,
     city: newSpotInfo.city,
     state: newSpotInfo.state,
