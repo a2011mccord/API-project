@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux'
 import { createReview } from '../../store/reviewsReducer';
 import { useModal } from '../../context/Modal';
+import { fetchSpotDetails } from '../../store/spotsReducer';
 import './PostReviewModal.css';
 
 function PostReviewModal({ spotId }) {
@@ -22,6 +23,7 @@ function PostReviewModal({ spotId }) {
 
     return dispatch(createReview(spotId, payload))
       .then(reset())
+      .then(dispatch(fetchSpotDetails(spotId)))
       .then(closeModal)
       .catch(async res => {
         const data = await res.json();

@@ -8,6 +8,11 @@ import PostReviewModal from "../PostReviewModal";
 import DeleteReviewModal from "../DeleteReviewModal";
 import './SpotDetails.css';
 
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June', 'July',
+  'August', 'September', 'October', 'November', 'December'
+]
+
 function SpotDetails() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -17,9 +22,12 @@ function SpotDetails() {
   const sessionUser = useSelector(state => state.session.user)
 
   useEffect(() => {
-    dispatch(fetchSpotDetails(spotId));
     dispatch(fetchReviewsBySpot(spotId));
   }, [dispatch, spotId])
+
+  useEffect(() => {
+    dispatch(fetchSpotDetails(spotId))
+  }, [dispatch, spotId, spotReviews])
 
   return (
     <>
@@ -30,7 +38,7 @@ function SpotDetails() {
             <h3>{`${spotDetails.city}, ${spotDetails.state}, ${spotDetails.country}`}</h3>
           </header>
           <div className="images-wrapper">
-            <div id="preview-image">
+            <div id="preview-image-wrapper">
               <img src={spotDetails.SpotImages?.find(image => image.preview).url} />
             </div>
             {spotDetails.SpotImages?.map(image => {
@@ -82,14 +90,18 @@ function SpotDetails() {
               />
             }
 
-            {!spotReviews.length && <p>Be the first to post a review!</p>}
+            {sessionUser && sessionUser.id !== spotDetails.ownerId &&
+              !spotReviews.length && <p>Be the first to post a review!</p>}
 
             {
               spotReviews && spotReviews.map(review => {
+                const createdAt = new Date(review.createdAt)
+
                 return (
                   <div key={review.id}>
                     <h3>{review.User?.firstName}</h3>
-                    <span>{review.createdAt}</span>
+                    {console.log(createdAt)}
+                    <span>{`${MONTHS[createdAt.getMonth()]} ${createdAt.getFullYear()}`}</span>
                     <p>{review.review}</p>
                     {sessionUser && sessionUser.id === review.userId &&
                       <OpenModalButton

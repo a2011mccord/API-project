@@ -16,7 +16,11 @@
   width: 100%;
 }
 
-#preview-image {
+.images-wrapper img {
+  object-fit: cover;
+}
+
+#preview-image-wrapper {
   grid-column-start: 1;
   grid-column-end: 3;
   grid-row-start: 1;

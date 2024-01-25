@@ -24,6 +24,15 @@ function LoginFormModal({ navigateHome }) {
       });
   };
 
+  const handleDemoLogin = () => {
+    return dispatch(loginUser({
+      credential: 'Demo-lition',
+      password: 'password'
+    }))
+      .then(closeModal)
+      .then(navigateHome)
+  }
+
   return (
     <div className="login-form">
       <h1>Log In</h1>
@@ -48,6 +57,7 @@ function LoginFormModal({ navigateHome }) {
         </label>
         {errors.message && (<p className="err">{errors.message}</p>)}
         <button type="submit" disabled={credential.length < 4 || password.length < 6}>Login</button>
+        <button id="demo-login" onClick={handleDemoLogin}>Demo User</button>
       </form>
     </div>
   )
