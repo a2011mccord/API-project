@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as sessionActions from '../../store/session';
 import OpenModalButton from '../OpenModalButton';
 import LoginFormModal from '../LoginFormModal';
@@ -51,13 +51,17 @@ function ProfileButton({ user }) {
       <ul className={ulClassName} ref={ulRef}>
         {user ? (
           <>
+            <li>Hello, {user.firstName}</li>
             <li>{user.username}</li>
-            <li>{user.firstName} {user.lastName}</li>
             <li>{user.email}</li>
             <li id="manage-spots">
-              <NavLink to='/spots/current' onClick={() => setShowMenu(false)}>
+              <button onClick={e => {
+                e.preventDefault();
+                navigate('/spots/current');
+                setShowMenu(false);
+              }}>
                 Manage Spots
-              </NavLink>
+              </button>
             </li>
             <li>
               <button onClick={logout}>Log Out</button>

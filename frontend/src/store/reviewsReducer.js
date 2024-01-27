@@ -56,7 +56,10 @@ export const deleteReview = reviewId => async dispatch => {
 }
 
 const selectedReviews = state => state.reviewsState.reviews;
-export const selectReviewsArray = createSelector(selectedReviews, reviews => Object.values(reviews));
+export const selectReviewsArray = createSelector(selectedReviews,
+  reviews => Object.values(reviews).sort((reviewA, reviewB) => {
+    return reviewB.id - reviewA.id;
+  }));
 
 const initialState = { reviews: {} }
 

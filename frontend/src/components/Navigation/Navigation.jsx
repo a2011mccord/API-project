@@ -1,16 +1,22 @@
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import ProfileButton from "./ProfileButton";
 import './Navigation.css';
 
 function Navigation({ isLoaded }) {
   const sessionUser = useSelector(state => state.session.user);
+  const navigate = useNavigate();
 
   return (
     <nav>
       <ul>
         <li>
-          <NavLink to='/'>Home</NavLink>
+          <img
+            id="logo"
+            src="/images/homeshare-logo.jpg"
+            onClick={() => navigate('/')}
+          />
         </li>
         {isLoaded && (
           <div>
